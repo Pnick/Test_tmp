@@ -1,0 +1,209 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>rgs</groupId>
+	<artifactId>rgs</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<!-- <packaging>jar</packaging> -->
+	<name>rgs</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<cucumber.version>7.7.0</cucumber.version>
+		<jackson.version>2.13.4</jackson.version>
+	</properties>
+	<dependencies>
+		<!-- Selenium Dependency -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>4.11.0</version>
+		</dependency>
+		<!-- TestNG Dependency -->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>7.8.0</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- JUnit Dependency -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.2</version>
+			<scope>test</scope>
+		</dependency>
+		<!--Cucumber Dependencies -->
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<version>${cucumber.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-testng</artifactId>
+			<version>${cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>${cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-picocontainer</artifactId>
+			<version>${cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>5.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>tech.grasshopper</groupId>
+			<artifactId>extentreports-cucumber7-adapter</artifactId>
+			<version>1.7.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver</artifactId>
+			<version>3.12.11</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20220320</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.15.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-yaml</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.10.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>3.0.0-M7</version>
+					<!-- <dependencies> <dependency> <groupId>org.apache.maven.surefire</groupId> 
+						<artifactId>surefire-junit47</artifactId> <version>2.22.2</version> </dependency> 
+						</dependencies> -->
+					<configuration>
+						<systemPropertyVariables>
+							<environment>${env.TEST}</environment>
+						</systemPropertyVariables>
+						<!-- <properties> <property> <name>usedefaultlisteners</name> <value>false</value> 
+							</property> </properties> -->
+						<suiteXmlFiles>
+							<file>RunAllSuites.xml</file>
+						</suiteXmlFiles>
+						<testFailureIgnore>true</testFailureIgnore>
+						<!-- <parallel>all</parallel> -->
+						<!-- <parallel>methods</parallel> <threadCount>4</threadCount> -->
+						<!-- <useUnlimitedThreads>true</useUnlimitedThreads> -->
+						<!-- <forkCount>3</forkCount> <reuseForks>true</reuseForks> <testFailureIgnore>true</testFailureIgnore> -->
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>com.github.temyers</groupId>
+					<artifactId>cucumber-jvm-parallel-plugin</artifactId>
+					<version>5.0.0</version>
+					<executions>
+						<execution>
+							<id>generateRunners</id>
+							<phase>generate-test-sources</phase>
+							<goals>
+								<goal>generateRunners</goal>
+							</goals>
+							<configuration>
+								<!-- Mandatory -->
+								<!-- List of package names to scan for glue code. -->
+								<glue>
+									<package>Tests</package>
+								</glue>
+								<!-- These are optional, with the default values -->
+								<!-- Where to output the generated tests -->
+								<outputDirectory>${project.build.directory}/generated-test-sources/cucumber</outputDirectory>
+								<!-- The directory, which must be in the root of the runtime classpath, 
+									containing your feature files. -->
+								<featuresDirectory>Features</featuresDirectory>
+								<!-- Directory where the cucumber report files shall be written -->
+								<cucumberOutputDir>target/cucumber-parallel</cucumberOutputDir>
+								<!-- List of cucumber plugins. When none are provided the json formatter 
+									is used. For more advanced usage see section about configuring cucumber plugins -->
+								<plugins>
+									<plugin>
+										<name>json</name>
+									</plugin>
+								</plugins>
+								<!-- CucumberOptions.strict property -->
+								<strict>true</strict>
+								<!-- CucumberOptions.monochrome property -->
+								<monochrome>true</monochrome>
+								<!-- The tags to run, maps to CucumberOptions.tags property. Default 
+									is no tags. -->
+								<tags>
+									<!-- <tag>"~@manual"</tag> <tag>"~@notSupported"</tag> <tag>"~@notImplemented"</tag> 
+										<tag>"~@CannotBeTested"</tag> <tag>"~@bt2view"</tag> -->
+								</tags>
+								<!-- Generate TestNG runners instead of JUnit ones. -->
+								<useTestNG>false</useTestNG>
+								<!-- The naming scheme to use for the generated test classes. One 
+									of 'simple' or 'feature-title' -->
+								<namingScheme>simple</namingScheme>
+								<!-- The class naming pattern to use. Only required/used if naming 
+									scheme is 'pattern'. -->
+								<namingPattern>Parallel{c}Test</namingPattern>
+								<!-- One of [SCENARIO, FEATURE]. SCENARIO generates one runner per 
+									scenario. FEATURE generates a runner per feature. -->
+								<parallelScheme>SCENARIO</parallelScheme>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Automation Test Report" verbose="2" parallel="tests"
+	thread-count="4" data-provider-thread-count="1">
+	<test name="Backend History Tests">
+		<classes>
+			<class name="Runner.RunnerHistoryIT" />
+		</classes>
+	</test>
+ 	<test name="Backend Management Tests">
+		<classes>
+			<class name="Runner.RunnerManagementIT" />
+		</classes>
+	</test>
+	<test name="Backend Login Tests">
+		<classes>
+			<class name="Runner.RunnerUsersIT" />
+		</classes>
+	</test>
+ 	<test name="Backend Bet Configurations Tests">
+		<classes>
+			<class name="Runner.RunnerBetConfigurationsIT" />
+		</classes>
+	</test>
+	<test name="Backend Operator AccountIT Tests">
+		<classes>
+			<class name="Runner.RunnerOperatorAccountIT" />
+		</classes>
+	</test>
+</suite>

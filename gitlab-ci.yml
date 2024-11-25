@@ -1,0 +1,59 @@
+.function: &functions |
+    #!/bin/bash
+
+    # Google Chrome
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+        && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' \
+        && apt-get update -qqy \
+        && apt-get -qqy install google-chrome-stable \
+        && rm /etc/apt/sources.list.d/google-chrome.list \
+        && sed -i 's/"$HERE\/chrome"/"$HERE\/chrome" --no-sandbox/g' /opt/google/chrome/google-chrome
+ 
+    # ChromeDriver 
+    CHROME_DRIVER_VERSION=76.0.3809.68
+    wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.storage.googleapis.com/$CHROME_DRIVER_VERSION/chromedriver_linux64.zip \
+        && rm -rf /opt/chromedriver \
+        && unzip /tmp/chromedriver_linux64.zip -d /opt \
+        && rm /tmp/chromedriver_linux64.zip \
+        && mv /opt/chromedriver /opt/chromedriver-$CHROME_DRIVER_VERSION \
+        && chmod 755 /opt/chromedriver-$CHROME_DRIVER_VERSION \
+        && ln -fs /opt/chromedriver-$CHROME_DRIVER_VERSION /usr/bin/chromedriver
+        
+image: maven:latest
+  
+stages:
+  - build
+  - test
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  MAVEN_CLI_OPTS: "-s pom.xml --batch-mode"
+
+
+cache:
+  paths:
+    - .m2/repository/
+
+build:
+  stage: build
+  script:
+    - mvn $MAVEN_CLI_OPTS compile
+  tags:
+    - rgs-runner
+
+
+test:
+  allow_failure: true
+  stage: test
+  script:
+    - *functions
+    # - mvn $MAVEN_CLI_OPTS clean test -Dtest=Runner.testrunner -Dsurefire.useFile=false
+    - mvn $MAVEN_CLI_OPTS clean test -DsuiteXmlFile=RunAllSuites.xml
+    # - mvn $MAVEN_CLI_OPTS clean test -Dsurefire.suiteXmlFiles=RunAllSuites.xml
+  tags:
+    - rgs-runner
+  artifacts:
+    reports:
+    paths:
+    - output/Report*/*.html
+    - output/Report*/screenshots/*.png
